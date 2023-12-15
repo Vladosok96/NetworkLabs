@@ -1,23 +1,38 @@
-def parse_pathping(popen):
-    IPs = []
-    state = 0
-    counter = 0
-    while True:
-        line = popen.stdout.readline()
-        if len(line) == 0:
-            break
-        if counter > 2 and state == 0:
-            if line[0] != ' ':
-                state = 1
-                return IPs
-            line = line[5:]
-            if line[0].isdigit():
-                IPs.append(line[:-2])
-            else:
-                try:
-                    IPs.append(line.split('[')[1].split(']')[0])
-                except:
-                    pass
-        counter += 1
+import subprocess
+import re
 
-    return IPs
+
+class PathPingParser:
+
+    def __init__(self, address):
+
+        self.list = []
+
+        self.popen = subprocess.Popen(f"pathping {address}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                      text=True, encoding='cp866')
+        for _ in range(3):
+            self.popen.stdout.readline()
+
+    def get_next_ip(self):
+        line = self.popen.stdout.readline()
+        if line[0] != ' ':
+            return False
+        line = line[5:]
+        if '[' not in line:
+            result = line[:-2]
+            self.list.append(result)
+            return result
+        else:
+            try:
+                result = line.split('[')[1].split(']')[0]
+                self.list.append(result)
+                return result
+            except:
+                pass
+
+    def get_stat(self):
+        for _ in range(3):
+            self.popen.stdout.readline()
+        for i in range(len(self.list)):
+            print(re.split(' {5}| {4}| {3}| {2}| |/|=', self.popen.stdout.readline()))
+            self.popen.stdout.readline()
