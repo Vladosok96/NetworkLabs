@@ -49,13 +49,12 @@ while True:
                     font_color='black', arrows=True, **options)
             fig_canvas_agg.draw()
 
-            event, values = window.read(timeout=1)
-            if event in (psg.WIN_CLOSED, 'Exit'):
-                break
+            window.read(timeout=1)
 
             last_ip = current_ip
             current_ip = pathping.get_next_ip()
 
-        pathping.get_stat()
+        window.read(timeout=1)
+        window['-pathping_table-'].update(values=pathping.get_stat())
 
 window.close()

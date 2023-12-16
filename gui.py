@@ -3,27 +3,45 @@ import PySimpleGUI as psg
 
 def create_window():
     psg.set_options(font=("Arial Bold", 14))
-    tab1 = [
+    ping = [
         [psg.Text("IP адрес"), psg.Input(key='-ping_address-')],
     ]
-    tab2 = [
+    ipconfig = [
 
     ]
-    tab3 = [
-        [psg.Text("IP адрес"), psg.Input(key='-pathping_address-')],
-        [psg.Button('Начать поиск', key='-pathping_begin-')],
+    pathping_table = [
+        [psg.Table(values=[['', '', '', '']],
+                   headings=['прыжок', 'RTT', 'исходный', 'маршрутный', 'адрес'],
+                   auto_size_columns=True,
+                   display_row_numbers=False,
+                   justification='center', key='-pathping_table-',
+                   selected_row_colors='red on yellow',
+                   enable_events=True,
+                   expand_x=True,
+                   expand_y=True,
+                   enable_click_events=True)]
+    ]
+    pathping_graph = [
         [psg.Canvas(key='-pathping_canvas-')]
     ]
-    tab4 = [
+    pathping = [
+        [psg.Text("IP адрес"), psg.Input(key='-pathping_address-')],
+        [psg.Button('Начать поиск', key='-pathping_begin-')],
+        [psg.TabGroup([
+            [psg.Tab('таблица', pathping_table),
+             psg.Tab('граф', pathping_graph)]], size=(950, 600))],
+        [psg.Canvas(key='-pathping_canvas-')]
+    ]
+    route = [
 
     ]
 
     layout = [[psg.TabGroup([
-        [psg.Tab('ping', tab1),
-         psg.Tab('ipconfig', tab2),
-         psg.Tab('pathping', tab3),
-         psg.Tab('route', tab4)]])],
+        [psg.Tab('ping', ping),
+         psg.Tab('ipconfig', ipconfig),
+         psg.Tab('pathping', pathping),
+         psg.Tab('route', route)]])],
         [psg.OK(), psg.Cancel()]
     ]
 
-    return psg.Window('Сети', layout, finalize=True)
+    return psg.Window('Сети', layout, finalize=True, size=(1000, 700))
