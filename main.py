@@ -16,6 +16,10 @@ fig, ax = plt.subplots()
 fig_canvas_agg = FigureCanvasTkAgg(fig, window['-pathping_canvas-'].TKCanvas)
 fig_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
 
+ipconfig = None
+pathping = None
+ping = None
+
 G = nx.Graph()
 options = {
     "font_size": 7,
@@ -26,15 +30,34 @@ options = {
 
 while True:
     event, values = window.read()
-    print(event, values)
+
     if event in (psg.WIN_CLOSED, 'Exit'):
         break
-    if event == '-pathping_begin-':
 
+    if event == '-ping_begin-':
+        ping = parsers.PingParser(values['-ping_address-'])
+        while not ping.is_done:
+            ping.read()
+            window['-ping_info-'].update(value=ping.info)
+            window.read(timeout=1)
+
+    if event == '-ipconfig_begin-':
+        ipconfig = parsers.IpconfigParser()
+        titles = []
+        for adapter in ipconfig.adapters:
+            titles.append(adapter[0])
+        window['-ipconfig_list-'].update(values=titles)
+
+    if event == '-ipconfig_list-':
+        adapter_name = values['-ipconfig_list-'][0]
+        for adapter in ipconfig.adapters:
+            if adapter_name == adapter[0]:
+                window['-ipconfig_info-'].update(value=adapter[1])
+
+    if event == '-pathping_begin-':
         pathping = parsers.PathPingParser(values['-pathping_address-'])
         last_ip = False
         current_ip = pathping.get_next_ip()
-
         while current_ip != False:
 
             G.add_node(current_ip)
@@ -45,8 +68,7 @@ while True:
 
             plt.figure(1)
             plt.clf()
-            nx.draw(G, pos, with_labels=True, node_size=700, node_color='skyblue',
-                    font_color='black', arrows=True, **options)
+            nx.draw(G, pos, node_color='skyblue', with_labels=True, node_size=700, font_color='black', arrows=True, **options)
             fig_canvas_agg.draw()
 
             window.read(timeout=1)
@@ -56,5 +78,6 @@ while True:
 
         window.read(timeout=1)
         window['-pathping_table-'].update(values=pathping.get_stat())
+        psg.popup("Готово")
 
 window.close()
