@@ -71,8 +71,16 @@ class IpconfigParser:
 
 
 class PingParser:
-    def __init__(self, address):
-        self.popen = subprocess.Popen(f"ping {address}", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    def __init__(self, address, count, size, fragment, ttl, show, wait):
+
+        request = f'ping {address} -n {count} -l {size} -i {ttl} -w {wait} '
+        if fragment:
+            request += '-f '
+        if int(show) > 0:
+            request += '-r ' + show
+
+        print(request)
+        self.popen = subprocess.Popen(request, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                       text=True, encoding='cp866')
 
         self.is_done = False

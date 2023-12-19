@@ -10,12 +10,17 @@ def create_window():
         [psg.Canvas(key='-ping_canvas-')]
     ]
     ping = [
-        [psg.Text("IP адрес"), psg.Input(key='-ping_address-')],
+        [psg.Text("Адрес"), psg.Input(key='-ping_address-')],
+        [psg.Text("Кол-во зпаросов:"), psg.Input(key='-ping_n-', default_text='4'),
+         psg.Text("Размер пакета:"), psg.Input(key='-ping_l-', default_text='64')],
+        [psg.Checkbox(text='Фрагментировать', key='-ping_f-'),
+         psg.Text("TTL:"), psg.Input(key='-ping_i-', default_text='255')],
+        [psg.Text("Показать маршрут:"), psg.Input(key='-ping_r-', default_text='0'),
+         psg.Text("Ожидание:"), psg.Input(key='-ping_w-', default_text='1000')],
         [psg.Button('Начать поиск', key='-ping_begin-')],
         [psg.TabGroup([
             [psg.Tab('информация', ping_table),
-             psg.Tab('граф', ping_graph)]], size=(950, 600))],
-        [psg.Canvas(key='-ping_canvas-')]
+             psg.Tab('граф', ping_graph)]])]
     ]
     ipconfig = [
         [psg.Column([

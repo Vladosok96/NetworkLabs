@@ -12,9 +12,12 @@ matplotlib.use('TkAgg')
 
 window = gui.create_window()
 
-fig, ax = plt.subplots()
-fig_canvas_agg = FigureCanvasTkAgg(fig, window['-pathping_canvas-'].TKCanvas)
-fig_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+fig_ping, ax_ping = plt.subplots()
+fig_canvas_agg_ping = FigureCanvasTkAgg(fig_ping, window['-ping_canvas-'].TKCanvas)
+fig_canvas_agg_ping.get_tk_widget().pack(side='top', fill='both', expand=1)
+
+fig_canvas_agg_pathping = FigureCanvasTkAgg(fig_ping, window['-pathping_canvas-'].TKCanvas)
+fig_canvas_agg_pathping.get_tk_widget().pack(side='top', fill='both', expand=1)
 
 ipconfig = None
 pathping = None
@@ -35,7 +38,24 @@ while True:
         break
 
     if event == '-ping_begin-':
-        ping = parsers.PingParser(values['-ping_address-'])
+        if pathping != None:
+            pos = nx.kamada_kawai_layout(G)
+
+            plt.figure(1)
+            plt.clf()
+            nx.draw(G, pos, node_color='skyblue', with_labels=True, node_size=700, font_color='black', arrows=True,
+                    **options)
+            fig_canvas_agg_ping.draw()
+
+            window.read(timeout=1)
+
+        ping = parsers.PingParser(values['-ping_address-'],
+                                  values['-ping_n-'],
+                                  values['-ping_l-'],
+                                  values['-ping_f-'],
+                                  values['-ping_i-'],
+                                  values['-ping_r-'],
+                                  values['-ping_w-'])
         while not ping.is_done:
             ping.read()
             window['-ping_info-'].update(value=ping.info)
@@ -69,7 +89,7 @@ while True:
             plt.figure(1)
             plt.clf()
             nx.draw(G, pos, node_color='skyblue', with_labels=True, node_size=700, font_color='black', arrows=True, **options)
-            fig_canvas_agg.draw()
+            fig_canvas_agg_pathping.draw()
 
             window.read(timeout=1)
 
