@@ -79,7 +79,6 @@ class PingParser:
         if int(show) > 0:
             request += '-r ' + show
 
-        print(request)
         self.popen = subprocess.Popen(request, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                       text=True, encoding='cp866')
 
@@ -92,3 +91,33 @@ class PingParser:
             self.is_done = True
             return
         self.info += line
+
+
+class RouteParcer:
+    @staticmethod
+    def print():
+        request = 'route print'
+        popen = subprocess.Popen(request, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                      text=True, encoding='cp866')
+
+        output = ''
+        line = popen.stdout.readline()
+        while line != '':
+            output += line
+            line = popen.stdout.readline()
+
+        return output
+
+    @staticmethod
+    def request(request):
+        popen = subprocess.Popen(request, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                 text=True, encoding='cp866')
+
+        output = ''
+        line = popen.stdout.readline()
+        while line != '':
+            output += line
+            line = popen.stdout.readline()
+
+        return output
+

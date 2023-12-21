@@ -55,7 +55,16 @@ def create_window():
              psg.Tab('граф', pathping_graph)]], size=(950, 600))]
     ]
     route = [
-
+        [psg.Column([
+            [psg.MLine(size=(80, 40), key='-route_info-', font=("courier new", 9))]
+        ]),
+         psg.Column([
+             [psg.Button('Поиск', key='-route_print-')],
+             [psg.Text("Адрес:"), psg.Input(key='-route_address-')],
+             [psg.Text("Маска:"), psg.Input(key='-route_mask-')],
+             [psg.Text("Шлюз:"), psg.Input(key='-route_gateway-')],
+             [psg.Button('Добавить', key='-route_add-'), psg.Button('Удалить', key='-route_delete-')],
+         ])]
     ]
 
     layout = [

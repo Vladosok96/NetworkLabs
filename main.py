@@ -100,4 +100,30 @@ while True:
         window['-pathping_table-'].update(values=pathping.get_stat())
         psg.popup("Готово")
 
+    if event == '-route_print-':
+        route = parsers.RouteParcer.print()
+        window['-route_info-'].update(value=route)
+
+    if event == '-route_add-':
+        address = values['-route_address-']
+        mask = values['-route_mask-']
+        gateway = values['-route_gateway-']
+
+        request = f'route add {address} mask {mask} {gateway}'
+        result = parsers.RouteParcer.request(request)
+
+        route = parsers.RouteParcer.print()
+        window['-route_info-'].update(value=route)
+
+    if event == '-route_delete-':
+        address = values['-route_address-']
+        mask = values['-route_mask-']
+        gateway = values['-route_gateway-']
+
+        request = f'route delete {address} mask {mask} {gateway}'
+        parsers.RouteParcer.request(request)
+
+        route = parsers.RouteParcer.print()
+        window['-route_info-'].update(value=route)
+
 window.close()
